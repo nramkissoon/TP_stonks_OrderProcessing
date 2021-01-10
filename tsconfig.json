@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "noImplicitAny": false,
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        },
+        "lib": ["ES2020"]
+    },
+    "include": [
+        "src/**/*",
+        "node_modules/stock-market-orders/src/**/*"
+    ]
+  }
