@@ -9,6 +9,8 @@ import AsyncLock from 'async-lock';
 
 dotenv.config();
 
+console.log("if running locally, ensure ngrok is running, if not, ensure SNS order topic is subscribed to")
+
 // configure aws and DynamoDB
 AWS.config.update({ region: 'us-east-1' })
 export const dynamodb = new AWS.DynamoDB({

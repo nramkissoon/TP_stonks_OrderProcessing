@@ -12,16 +12,3 @@ export const getOrdersFromSNSMessage = (message: string) => {
   });
   return orders;
 }
-
-export const publishOrderExecutionInfoToSNS = async (orderExecutionInfos: OrderExecutionInfo[]) => {
-  const message = JSON.stringify(orderExecutionInfos);
-  const topicArn = process.env.ORDER_EXECUTION_INFO_TOPIC_ARN;
-  const params = {
-    Message: message,
-    TopicArn: topicArn
-  };
-  new AWS.SNS().publish(params, (err: AWS.AWSError, data: AWS.SNS.PublishResponse) => {
-    if (err) { console.log(err.message) }
-    if (data) { } //TODO
-  });
-}

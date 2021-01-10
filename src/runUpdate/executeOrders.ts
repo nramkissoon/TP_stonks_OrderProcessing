@@ -10,7 +10,7 @@ import {
   removeCash
 } from '../utils/position'
 import { InvalidOrderReasons } from '../utils/consts';
-import { publishOrderExecutionInfoToSNS } from './../utils/snsMessaging';
+
 
 const POSITION_LIMIT = 10;
 
@@ -186,5 +186,5 @@ export const executeOrders = (positions: {}[], userOrders: UserOrderData[], quot
     }
     orderExecutionResults.push(orderExecutionInfo);
   });
-  if (orderExecutionResults.length > 0) { publishOrderExecutionInfoToSNS(orderExecutionResults); }
+  return orderExecutionResults;
 }

@@ -1,11 +1,12 @@
 import { UserOrderData } from "../utils/orders";
-import { getTickerSymbolsFromOrders, executeOrders } from './executeOrders';
+import { getTickerSymbolsFromOrders, executeOrders, OrderExecutionInfo } from './executeOrders';
 import { getTickerSymbolsFromPositions, getPositionsFromDB, deleteItemsFromDBWithZeroQuantity, updateDBWithNewPositions } from './positionsDB';
 import { getMostRecentAccountValue, putNewAccountValueIntoDB } from './accountValueDB';
 import { calculateAccountValue } from '../utils/accountValue';
 import { TdApiGetQuotes } from './tdAPI';
 import { updateEquityPositions, removeEquityPositionsWithZeroQuantity } from '../utils/position';
 import { lockKey, lock } from '../app';
+import { putNewProcessedOrdersIntoDB } from './processedOrderDB'
 
 //Returns set of ticker symbols to query from market data API
 const getNeededTickerSymbolsForQuoteAPICall = (userOrders: UserOrderData[], positionsData: {}[]) => {
@@ -25,8 +26,9 @@ export const runUpdate = async (userOrders: UserOrderData[], db: AWS.DynamoDB) =
     const tickerSymbols = getNeededTickerSymbolsForQuoteAPICall(userOrders, positions);
     const quoteData = await TdApiGetQuotes(tickerSymbols, db);
     updateEquityPositions(positions, quoteData);
+    let processedOrders: OrderExecutionInfo[] = [];
     if (userOrders.length > 0) {
-      executeOrders(positions, userOrders, quoteData);
+      processedOrders = executeOrders(positions, userOrders, quoteData);
       updateEquityPositions(positions, quoteData);
     }
     
@@ -39,6 +41,7 @@ export const runUpdate = async (userOrders: UserOrderData[], db: AWS.DynamoDB) =
     if (deleteResponseCode === 200) { // if we could not delete the correct positions, we have inconsistent data, abort the update by not putting new data
       const putResponseCode = await updateDBWithNewPositions(positions, db);
     }
+    if (processedOrders.length > 0) { await putNewProcessedOrdersIntoDB(db, processedOrders); }
     done();
   }).catch((err) => console.log(err));
 }
