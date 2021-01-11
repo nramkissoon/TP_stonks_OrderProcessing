@@ -4,6 +4,7 @@ import bodyparser from 'body-parser';
 import AWS from 'aws-sdk';
 import https from 'https';
 import { router } from './routes/sns';
+import { accountRouter } from './routes/account'
 import { runUpdate } from './runUpdate/runUpdate'
 import AsyncLock from 'async-lock';
 
@@ -50,6 +51,7 @@ app.use(bodyparser.raw());
 app.use(bodyparser.text());
 
 app.use('/sns', router);
+app.use('/data', accountRouter);
 
 app.listen(port, () => {
     console.log( `server started at http://localhost:${ port }` );
