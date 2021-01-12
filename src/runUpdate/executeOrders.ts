@@ -20,7 +20,7 @@ interface OrderValidationInfo {
 }
 
 export interface OrderExecutionInfo {
-  userOrderDate: UserOrderData,
+  userOrderData: UserOrderData,
   processedTimestamp: number,
   orderValidationInfo: OrderValidationInfo,
   executed: boolean,
@@ -170,7 +170,7 @@ export const executeOrders = (positions: {}[], userOrders: UserOrderData[], quot
   userOrders.forEach((order) => {
     const orderValidationInfo: OrderValidationInfo = isOrderValid(positions, order, quoteData);
     const orderExecutionInfo: OrderExecutionInfo = {
-      userOrderDate: order,
+      userOrderData: order,
       processedTimestamp: (orderValidationInfo.isValid ? 0 : new Date().getTime()),
       orderValidationInfo: orderValidationInfo,
       executed: false,

@@ -17,7 +17,8 @@ accountRouter.get('/account', async (req, res) => {
     res.json({
       positions,
       accountValue,
-      processedOrders
+      processedOrders,
+      timestamp: new Date().getTime()
     });
     done();
   })

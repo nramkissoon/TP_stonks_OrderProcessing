@@ -2,7 +2,7 @@
   "name": "tp_stonks_order_execution",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.js",
+  "main": "dist/src/app.js",
   "scripts": {
     "build": "tsc -p .",
     "dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/app.ts",
@@ -11,13 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async-lock": "^1.2.6",
     "aws-sdk": "^2.820.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "request": "^2.88.2",
     "stock-market-orders": "git@github.com:nramkissoon/stock-market-orders.git",
-    "tmi.js": "^1.7.1",
-    "async-lock": "^1.2.6"
+    "tmi.js": "^1.7.1"
   },
   "devDependencies": {
     "@types/async-lock": "^1.1.2",

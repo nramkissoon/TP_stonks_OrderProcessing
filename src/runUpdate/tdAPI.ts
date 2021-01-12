@@ -45,7 +45,14 @@ export const TdApiGetQuotes = async (tickers: string[], db: AWS.DynamoDB) => {
         // TODO add logic for API status notif
         resolve({});
       }
-      resolve(JSON.parse(body));
+      try {
+        const res = JSON.parse(body)
+        resolve(res);
+      } catch (e) {
+        console.log(e);
+        resolve({});
+      }
+      
     })
   });
   return apiResponseBody;

@@ -7,6 +7,7 @@ import { router } from './routes/sns';
 import { accountRouter } from './routes/account'
 import { runUpdate } from './runUpdate/runUpdate'
 import AsyncLock from 'async-lock';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -49,6 +50,8 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 app.use(bodyparser.raw());
 app.use(bodyparser.text());
+
+app.use(cors());
 
 app.use('/sns', router);
 app.use('/data', accountRouter);
