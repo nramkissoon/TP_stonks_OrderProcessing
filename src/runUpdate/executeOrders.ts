@@ -93,11 +93,11 @@ export const isOrderValid = (positions: {}[], userOrder: UserOrderData, quoteDat
     result.isValid = false;
     result.invalidReason = InvalidOrderReasons.NoQuoteData;
   } 
-  if (Number(quantity) === quantity && quantity % 1 !== 0) {
+  else if (Number(quantity) === quantity && quantity % 1 !== 0) {
     result.isValid = false;
     result.invalidReason = InvalidOrderReasons.NoFractionalShares;
   }
-  if (isBuyOrder(userOrder)) {
+  else if (isBuyOrder(userOrder)) {
     return validateBuyOrder(positions, userOrder, quoteData);
   } else if (isSellOrder(userOrder)) {
     return validateSellOrder(positions, userOrder);
