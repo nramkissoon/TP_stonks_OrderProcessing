@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import { log } from './../utils/logger'
 
 // get ALL positions from DynamoDB Table
 export const getPositionsFromDB = async (db: AWS.DynamoDB) => {
@@ -8,7 +9,7 @@ export const getPositionsFromDB = async (db: AWS.DynamoDB) => {
   }
   const positions = await db.scan(params)
     .promise()
-    .catch((err) => null)
+    .catch((err) => log('Unknown error getting positions from DB.'))
     .then((res) => {
       if (res && res.Items) {
         const result: {}[] = [];
@@ -17,6 +18,7 @@ export const getPositionsFromDB = async (db: AWS.DynamoDB) => {
         });
         return result;
       } else {
+        log(`Potential AWS Error when getting positions from DB: ${res}`)
         return null;
       }
     });
