@@ -70,11 +70,11 @@ const isOrderValid = (positions, userOrder, quoteData) => {
         result.isValid = false;
         result.invalidReason = consts_1.InvalidOrderReasons.NoQuoteData;
     }
-    if (Number(quantity) === quantity && quantity % 1 !== 0) {
+    else if (Number(quantity) === quantity && quantity % 1 !== 0) {
         result.isValid = false;
         result.invalidReason = consts_1.InvalidOrderReasons.NoFractionalShares;
     }
-    if (orders_1.isBuyOrder(userOrder)) {
+    else if (orders_1.isBuyOrder(userOrder)) {
         return validateBuyOrder(positions, userOrder, quoteData);
     }
     else if (orders_1.isSellOrder(userOrder)) {

@@ -18,6 +18,7 @@ const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const snsMessaging_1 = require("./../utils/snsMessaging");
 const runUpdate_1 = require("./../runUpdate/runUpdate");
 const app_1 = require("./../app");
+const logger_1 = require("./../utils/logger");
 // create the route for receiving stock orders from SNS Topic
 const router = express_1.default();
 exports.router = router;
@@ -26,8 +27,8 @@ router.post('/orders', (req, res) => __awaiter(void 0, void 0, void 0, function*
     const headers = req.headers;
     // if endpoint is unsubscribed, subscribe to it and confirm
     if (headers['x-amz-sns-message-type'] === 'SubscriptionConfirmation') {
-        console.log("Received subscription confirmation request...");
-        if (body['TopicArn'] === process.env.ORDER_TOPIC_ARN) {
+        logger_1.log("Received subscription confirmation request...");
+        if (body['TopicArn'] === process.env.ORDER_TOPIC_ARN) { // ACCEPT FROM ONLY SPECIFIC TOPIC ARN
             const confirmSubParams = {
                 Token: body['Token'],
                 TopicArn: body['TopicArn'],
@@ -35,9 +36,9 @@ router.post('/orders', (req, res) => __awaiter(void 0, void 0, void 0, function*
             };
             new aws_sdk_1.default.SNS().confirmSubscription(confirmSubParams, (err, data) => {
                 if (err)
-                    console.log(err, err.message);
+                    logger_1.log(`Error confirming subscription to Topic Arn: ${err.name} - ${err.message}`);
                 else
-                    console.log(data);
+                    logger_1.log(data.SubscriptionArn);
             });
         }
         return;

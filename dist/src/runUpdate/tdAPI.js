@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TdApiGetQuotes = exports.getTdApiAccessTokenFromDynamoDB = void 0;
 const request_1 = __importDefault(require("request"));
+const logger_1 = require("./../utils/logger");
 // get the access token needed to make authorized requests for real time data
 const getTdApiAccessTokenFromDynamoDB = (db) => __awaiter(void 0, void 0, void 0, function* () {
     const params = {
@@ -33,6 +34,8 @@ const getTdApiAccessTokenFromDynamoDB = (db) => __awaiter(void 0, void 0, void 0
         .then((res) => {
         if (res.Item)
             return res['Item']['value']['S'];
+        logger_1.log('Possible AWS Error getting TD API Access Token');
+        return null;
     });
     return accessToken;
 });
@@ -40,6 +43,8 @@ exports.getTdApiAccessTokenFromDynamoDB = getTdApiAccessTokenFromDynamoDB;
 const TdApiGetQuotes = (tickers, db) => __awaiter(void 0, void 0, void 0, function* () {
     const apiKey = process.env.TD_API_KEY;
     const tdAccessToken = yield exports.getTdApiAccessTokenFromDynamoDB(db);
+    if (!tdAccessToken)
+        return {}; // return empty object because we could not retrieve access token
     const authorization = 'Bearer ' + tdAccessToken;
     const apiURI = 'https://api.tdameritrade.com/v1/marketdata/quotes';
     const tickersQS = tickers.join(",");
@@ -55,8 +60,9 @@ const TdApiGetQuotes = (tickers, db) => __awaiter(void 0, void 0, void 0, functi
     let apiResponseBody = new Promise((resolve, reject) => {
         request_1.default.get(apiURI, options, (err, response, body) => {
             if (err)
-                reject(err);
-            if (response.statusCode !== 200) {
+                resolve({});
+            if (!response || response.statusCode !== 200) {
+                logger_1.log(`TD API not available, bad error code or null response: ${response}`);
                 // TODO add logic for API status notif
                 resolve({});
             }
@@ -65,7 +71,7 @@ const TdApiGetQuotes = (tickers, db) => __awaiter(void 0, void 0, void 0, functi
                 resolve(res);
             }
             catch (e) {
-                console.log(e);
+                logger_1.log(`Error converting TD GetQuotesAPI Response to JSON: ${e}`);
                 resolve({});
             }
         });

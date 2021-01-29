@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTickerSymbolsFromPositions = exports.updateDBWithNewPositions = exports.deleteItemsFromDBWithZeroQuantity = exports.getPositionsFromDB = void 0;
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const logger_1 = require("./../utils/logger");
 // get ALL positions from DynamoDB Table
 const getPositionsFromDB = (db) => __awaiter(void 0, void 0, void 0, function* () {
     const params = {
@@ -22,7 +23,7 @@ const getPositionsFromDB = (db) => __awaiter(void 0, void 0, void 0, function* (
     };
     const positions = yield db.scan(params)
         .promise()
-        .catch((err) => null)
+        .catch((err) => logger_1.log('Unknown error getting positions from DB.'))
         .then((res) => {
         if (res && res.Items) {
             const result = [];
@@ -32,6 +33,7 @@ const getPositionsFromDB = (db) => __awaiter(void 0, void 0, void 0, function* (
             return result;
         }
         else {
+            logger_1.log(`Potential AWS Error when getting positions from DB: ${res}`);
             return null;
         }
     });
