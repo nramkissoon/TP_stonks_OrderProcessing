@@ -4,6 +4,7 @@ import { getOrdersFromSNSMessage } from './../utils/snsMessaging'
 import { UserOrderData } from './../utils/orders';
 import { runUpdate } from './../runUpdate/runUpdate';
 import { dynamodb } from './../app'
+import { log } from './../utils/logger'
 
 // create the route for receiving stock orders from SNS Topic
 const router = Router();
@@ -14,16 +15,16 @@ router.post('/orders', async (req, res) => {
 
   // if endpoint is unsubscribed, subscribe to it and confirm
   if (headers['x-amz-sns-message-type'] === 'SubscriptionConfirmation') {
-    console.log("Received subscription confirmation request...")
-    if (body['TopicArn'] === process.env.ORDER_TOPIC_ARN) {
+    log("Received subscription confirmation request...")
+    if (body['TopicArn'] === process.env.ORDER_TOPIC_ARN) { // ACCEPT FROM ONLY SPECIFIC TOPIC ARN
       const confirmSubParams = {
         Token: body['Token'],
         TopicArn: body['TopicArn'],
         AuthenticateOnUnsubscribe: 'true'
       }
       new AWS.SNS().confirmSubscription(confirmSubParams, (err, data) => {
-        if (err) console.log(err, err.message);
-        else console.log(data);
+        if (err) log(`Error confirming subscription to Topic Arn: ${err.name} - ${err.message}`);
+        else log(data.SubscriptionArn);
       })
     }
     return;
